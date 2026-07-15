@@ -7,24 +7,39 @@ authors.workspace = true
 
 [features]
 default = ["std"]
-std = []
+std = [
+    "bitcode?/std",
+    "mirl_extensions_math/std",
+    "mirl_graphics/std",
+    "serde?/std",
+    "strum?/std",
+    "wincode?/std",
+    "zerocopy?/std",
+]
 # Does nothing by itself. Needs another codec or enum flag to do something
-mirl_derive = ["dep:mirl_derive"]
+mirl_derive = ["dep:mirl_derive", "mirl_graphics/mirl_derive"]
 # Compatibility with ffi
-c_compatible = ["mirl_derive"]
+c_compatible = ["mirl_derive", "mirl_graphics/c_compatible"]
 # Enables all codecs
-all_codecs = ["serde", "bitcode", "wincode", "compactly", "zerocopy"]
+all_codecs = [
+    "serde",
+    "bitcode",
+    "wincode",
+    "compactly",
+    "zerocopy",
+    "mirl_graphics/all_codecs",
+]
 # All enum extensions
 all_enum_extensions = ["strum", "enum_ext"]
 # Codec stuff
-serde = ["dep:serde", "mirl_derive", "mirl_graphics/serde"]
+serde = ["dep:serde", "mirl_derive", "mirl_graphics/serde", "bitcode?/serde"]
 bitcode = ["dep:bitcode", "mirl_derive", "mirl_graphics/bitcode"]
 wincode = ["dep:wincode", "mirl_derive", "mirl_graphics/wincode"]
 compactly = ["dep:compactly", "mirl_derive", "mirl_graphics/compactly"]
 zerocopy = ["dep:zerocopy", "mirl_derive", "mirl_graphics/zerocopy"]
 # Enum extensions
-strum = ["dep:strum", "mirl_derive"]
-enum_ext = ["dep:enum_ext", "mirl_derive"]
+strum = ["dep:strum", "mirl_derive", "mirl_graphics/strum"]
+enum_ext = ["dep:enum_ext", "mirl_derive", "mirl_graphics/enum_ext"]
 
 [dependencies]
 bitcode = { version = "0.6", optional = true, default-features = false, features = [

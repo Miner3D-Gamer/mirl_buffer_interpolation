@@ -112,10 +112,8 @@ pub fn resize_buffer_nearest(
 
     for y in 0..dst_height {
         for x in 0..dst_width {
-            let src_x = core::f32::math::mul_add(x as f32, x_ratio, 0.5).floor()
-                as usize;
-            let src_y = core::f32::math::mul_add(y as f32, y_ratio, 0.5).floor()
-                as usize;
+            let src_x = core::f32::math::mul_add(x as f32, x_ratio, 0.5).floor() as usize;
+            let src_y = core::f32::math::mul_add(y as f32, y_ratio, 0.5).floor() as usize;
 
             // Clamp to valid indices
             let src_x = src_x.min(src_width - 1);
@@ -152,8 +150,7 @@ pub fn resize_buffer_cubic(
             let src_x = x as f32 * x_ratio;
             let src_y = y as f32 * y_ratio;
 
-            let interpolated =
-                bicubic_sample(buffer, src_width, src_height, src_x, src_y);
+            let interpolated = bicubic_sample(buffer, src_width, src_height, src_x, src_y);
             result.push(interpolated);
         }
     }
@@ -185,8 +182,7 @@ pub fn resize_buffer_lanczos(
             let src_x = x as f32 * x_ratio;
             let src_y = y as f32 * y_ratio;
 
-            let interpolated =
-                lanczos_sample(buffer, src_width, src_height, src_x, src_y);
+            let interpolated = lanczos_sample(buffer, src_width, src_height, src_x, src_y);
             result.push(interpolated);
         }
     }
@@ -260,8 +256,7 @@ pub fn resize_buffer_catmull_rom(
             let src_x = x as f32 * x_ratio;
             let src_y = y as f32 * y_ratio;
 
-            let interpolated =
-                catmull_rom_sample(buffer, src_width, src_height, src_x, src_y);
+            let interpolated = catmull_rom_sample(buffer, src_width, src_height, src_x, src_y);
             result.push(interpolated);
         }
     }
@@ -293,8 +288,7 @@ pub fn resize_buffer_gaussian(
             let src_x = x as f32 * x_ratio;
             let src_y = y as f32 * y_ratio;
 
-            let interpolated =
-                gaussian_sample(buffer, src_width, src_height, src_x, src_y);
+            let interpolated = gaussian_sample(buffer, src_width, src_height, src_x, src_y);
             result.push(interpolated);
         }
     }
@@ -326,9 +320,8 @@ pub fn resize_buffer_mitchell_netravali(
             let src_x = x as f32 * x_ratio;
             let src_y = y as f32 * y_ratio;
 
-            let interpolated = mitchell_netravali_sample(
-                buffer, src_width, src_height, src_x, src_y,
-            );
+            let interpolated =
+                mitchell_netravali_sample(buffer, src_width, src_height, src_x, src_y);
             result.push(interpolated);
         }
     }
@@ -348,31 +341,29 @@ pub fn resize_buffer(
     resizing_method: InterpolationMode,
 ) -> Vec<u32> {
     match resizing_method {
-        InterpolationMode::Nearest => resize_buffer_nearest(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
-        InterpolationMode::Linear => resize_buffer_linear(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
-        InterpolationMode::Cubic => resize_buffer_cubic(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
-        InterpolationMode::Lanczos => resize_buffer_lanczos(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
-        InterpolationMode::Area => resize_buffer_area(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
-        InterpolationMode::CatmullRom => resize_buffer_catmull_rom(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
-        InterpolationMode::Gaussian => resize_buffer_gaussian(
-            buffer, src_width, src_height, dst_width, dst_height,
-        ),
+        InterpolationMode::Nearest => {
+            resize_buffer_nearest(buffer, src_width, src_height, dst_width, dst_height)
+        }
+        InterpolationMode::Linear => {
+            resize_buffer_linear(buffer, src_width, src_height, dst_width, dst_height)
+        }
+        InterpolationMode::Cubic => {
+            resize_buffer_cubic(buffer, src_width, src_height, dst_width, dst_height)
+        }
+        InterpolationMode::Lanczos => {
+            resize_buffer_lanczos(buffer, src_width, src_height, dst_width, dst_height)
+        }
+        InterpolationMode::Area => {
+            resize_buffer_area(buffer, src_width, src_height, dst_width, dst_height)
+        }
+        InterpolationMode::CatmullRom => {
+            resize_buffer_catmull_rom(buffer, src_width, src_height, dst_width, dst_height)
+        }
+        InterpolationMode::Gaussian => {
+            resize_buffer_gaussian(buffer, src_width, src_height, dst_width, dst_height)
+        }
         InterpolationMode::MitchellNetravali => {
-            resize_buffer_mitchell_netravali(
-                buffer, src_width, src_height, dst_width, dst_height,
-            )
+            resize_buffer_mitchell_netravali(buffer, src_width, src_height, dst_width, dst_height)
         }
     }
 }
@@ -388,14 +379,7 @@ pub const fn bilinear_interpolate_u32(
     progress_y: f32,
 ) -> u32 {
     #[inline(always)]
-    const fn lerp_2d(
-        v1: u32,
-        v2: u32,
-        v3: u32,
-        v4: u32,
-        progress_y: f32,
-        progress_x: f32,
-    ) -> f32 {
+    const fn lerp_2d(v1: u32, v2: u32, v3: u32, v4: u32, progress_y: f32, progress_x: f32) -> f32 {
         progress_y.interpolate_values(
             progress_x.interpolate_values(v1 as f32, v2 as f32),
             progress_x.interpolate_values(v3 as f32, v4 as f32),
@@ -445,26 +429,14 @@ pub const fn bilinear_interpolate_u32(
 }
 #[must_use]
 /// Get a pixel, clamping the position if it's outside the dimensions of the image
-pub fn get_pixel_bounded(
-    buffer: &[u32],
-    width: usize,
-    height: usize,
-    x: i32,
-    y: i32,
-) -> u32 {
+pub fn get_pixel_bounded(buffer: &[u32], width: usize, height: usize, x: i32, y: i32) -> u32 {
     let x = x.max(0).min(width as i32 - 1) as usize;
     let y = y.max(0).min(height as i32 - 1) as usize;
     buffer[y * width + x]
 }
 #[must_use]
 /// Bicubic interpolation sampling
-pub fn bicubic_sample(
-    buffer: &[u32],
-    width: usize,
-    height: usize,
-    x: f32,
-    y: f32,
-) -> u32 {
+pub fn bicubic_sample(buffer: &[u32], width: usize, height: usize, x: f32, y: f32) -> u32 {
     let x_int = x.floor() as i32;
     let y_int = y.floor() as i32;
     let dx = x - x_int as f32;
@@ -477,8 +449,7 @@ pub fn bicubic_sample(
 
     for j in -1..3 {
         for i in -1..3 {
-            let pixel =
-                get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
+            let pixel = get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
 
             let weight_x = cubic_hermite(dx, i as f32);
             let weight_y = cubic_hermite(dy, j as f32);
@@ -501,13 +472,7 @@ pub fn bicubic_sample(
 }
 #[must_use]
 /// Lanczos interpolation sampling
-pub fn lanczos_sample(
-    buffer: &[u32],
-    width: usize,
-    height: usize,
-    x: f32,
-    y: f32,
-) -> u32 {
+pub fn lanczos_sample(buffer: &[u32], width: usize, height: usize, x: f32, y: f32) -> u32 {
     const RADIUS: i32 = 3;
     let x_int = x.floor() as i32;
     let y_int = y.floor() as i32;
@@ -520,8 +485,7 @@ pub fn lanczos_sample(
 
     for j in -RADIUS..=RADIUS {
         for i in -RADIUS..=RADIUS {
-            let pixel =
-                get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
+            let pixel = get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
 
             let weight_x = lanczos_kernel(x - (x_int + i) as f32, RADIUS);
             let weight_y = lanczos_kernel(y - (y_int + j) as f32, RADIUS);
@@ -615,13 +579,7 @@ pub fn area_average_sample(
 
 /// Catmull-Rom spline interpolation
 #[must_use]
-pub fn catmull_rom_sample(
-    buffer: &[u32],
-    width: usize,
-    height: usize,
-    x: f32,
-    y: f32,
-) -> u32 {
+pub fn catmull_rom_sample(buffer: &[u32], width: usize, height: usize, x: f32, y: f32) -> u32 {
     let x_int = x.floor() as i32;
     let y_int = y.floor() as i32;
     let dx = x - x_int as f32;
@@ -634,8 +592,7 @@ pub fn catmull_rom_sample(
 
     for j in -1..3 {
         for i in -1..3 {
-            let pixel =
-                get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
+            let pixel = get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
 
             let weight_x = catmull_rom_kernel(dx - i as f32);
             let weight_y = catmull_rom_kernel(dy - j as f32);
@@ -659,13 +616,7 @@ pub fn catmull_rom_sample(
 
 /// Gaussian interpolation sampling
 #[must_use]
-pub fn gaussian_sample(
-    buffer: &[u32],
-    width: usize,
-    height: usize,
-    x: f32,
-    y: f32,
-) -> u32 {
+pub fn gaussian_sample(buffer: &[u32], width: usize, height: usize, x: f32, y: f32) -> u32 {
     const RADIUS: i32 = 2;
     const SIGMA: f32 = 1.0;
     let x_int = core::f32::math::round(x) as i32;
@@ -679,8 +630,7 @@ pub fn gaussian_sample(
 
     for j in -RADIUS..=RADIUS {
         for i in -RADIUS..=RADIUS {
-            let pixel =
-                get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
+            let pixel = get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
 
             let dx = x - (x_int + i) as f32;
             let dy = y - (y_int + j) as f32;
@@ -733,8 +683,7 @@ pub fn mitchell_netravali_sample(
 
     for j in -1..3 {
         for i in -1..3 {
-            let pixel =
-                get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
+            let pixel = get_pixel_bounded(buffer, width, height, x_int + i, y_int + j);
 
             let weight_x = mitchell_netravali_kernel(dx - i as f32);
             let weight_y = mitchell_netravali_kernel(dy - j as f32);
@@ -794,19 +743,11 @@ pub fn lanczos_kernel(x: f32, a: i32) -> f32 {
 pub fn catmull_rom_kernel(t: f32) -> f32 {
     let t_abs = t.abs();
     if t_abs < 1.0 {
-        core::f32::math::mul_add(
-            1.5 * t_abs * t_abs,
-            t_abs,
-            -(2.5 * t_abs * t_abs),
-        ) + 1.0
+        core::f32::math::mul_add(1.5 * t_abs * t_abs, t_abs, -(2.5 * t_abs * t_abs)) + 1.0
     } else if t_abs < 2.0 {
         core::f32::math::mul_add(
             4.0,
-            core::f32::math::mul_add(
-                -0.5 * t_abs * t_abs,
-                t_abs,
-                2.5 * t_abs * t_abs,
-            ),
+            core::f32::math::mul_add(-0.5 * t_abs * t_abs, t_abs, 2.5 * t_abs * t_abs),
             -4.0 * t_abs,
         ) + 2.0
     } else {
@@ -852,11 +793,8 @@ pub fn mitchell_netravali_kernel(t: f32) -> f32 {
                 core::f32::math::mul_add(B, 30.0 * C, t_abs * t_abs),
                 t_abs,
             ),
-        )) + core::f32::math::mul_add(
-            8.0,
-            core::f32::math::mul_add(B, 24.0 * C, 0.0),
-            0.0,
-        )) / 6.0
+        )) + core::f32::math::mul_add(8.0, core::f32::math::mul_add(B, 24.0 * C, 0.0), 0.0))
+            / 6.0
     } else {
         0.0
     }
