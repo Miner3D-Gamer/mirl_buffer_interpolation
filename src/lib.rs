@@ -5,13 +5,16 @@
 #![feature(core_float_math)]
 #![allow(clippy::similar_names)]
 #![allow(clippy::many_single_char_names)]
+#![feature(const_clone)]
+#![feature(const_cmp)]
+#![feature(derive_const)]
+#![feature(const_default)]
 
 use mirl_extensions_math::InterpolateAsInterpolator;
 use mirl_graphics::{prelude::*, u32_color_casting::PackChannelsIntoColor};
 
-#[cfg_attr(feature = "mirl_derive", mirl_derive::derive_all)]
+#[mirl_macros::derive_all(default = true)]
 /// The interpolation mode for resizing a buffer-like object
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash, PartialOrd, Ord)]
 pub enum InterpolationMode {
     #[default]
     /// Nearest neighbor - Best for pixel art and sharp edges
@@ -429,7 +432,7 @@ pub const fn bilinear_interpolate_u32(
 }
 #[must_use]
 /// Get a pixel, clamping the position if it's outside the dimensions of the image
-pub fn get_pixel_bounded(buffer: &[u32], width: usize, height: usize, x: i32, y: i32) -> u32 {
+pub const fn get_pixel_bounded(buffer: &[u32], width: usize, height: usize, x: i32, y: i32) -> u32 {
     let x = x.max(0).min(width as i32 - 1) as usize;
     let y = y.max(0).min(height as i32 - 1) as usize;
     buffer[y * width + x]

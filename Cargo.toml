@@ -1,9 +1,12 @@
 [package]
 name = "mirl_buffer_interpolation"
 version = "0.0.0-alpha"
-edition.workspace = true
+edition = "2024"
+repository = "https://github.com/Miner3D-Gamer/mirl_buffer_interpolation"
 license.workspace = true
 authors.workspace = true
+rust-version.workspace = true
+maintenance.workspace = true
 
 [features]
 default = ["std"]
@@ -16,10 +19,10 @@ std = [
     "wincode?/std",
     "zerocopy?/std",
 ]
-# Does nothing by itself. Needs another codec or enum flag to do something
-mirl_derive = ["dep:mirl_derive", "mirl_graphics/mirl_derive"]
+all = ["all_codecs", "all_enum_extensions", "all_misc_integrations"]
+_checking = ["all", "c_compatible"]
 # Compatibility with ffi
-c_compatible = ["mirl_derive", "mirl_graphics/c_compatible"]
+c_compatible = ["mirl_graphics/c_compatible"]
 # Enables all codecs
 all_codecs = [
     "serde",
@@ -29,26 +32,32 @@ all_codecs = [
     "zerocopy",
     "mirl_graphics/all_codecs",
 ]
+all_misc_integrations = ["rkyv", "get_size2", "bevy_reflect"]
 # All enum extensions
-all_enum_extensions = ["strum", "enum_ext"]
+all_enum_extensions = ["strum", "enum_ext", "enum_ordinalize"]
 # Codec stuff
-serde = ["dep:serde", "mirl_derive", "mirl_graphics/serde", "bitcode?/serde"]
-bitcode = ["dep:bitcode", "mirl_derive", "mirl_graphics/bitcode"]
-wincode = ["dep:wincode", "mirl_derive", "mirl_graphics/wincode"]
-compactly = ["dep:compactly", "mirl_derive", "mirl_graphics/compactly"]
-zerocopy = ["dep:zerocopy", "mirl_derive", "mirl_graphics/zerocopy"]
+serde = ["dep:serde", "mirl_graphics/serde", "bitcode?/serde"]
+bitcode = ["dep:bitcode", "mirl_graphics/bitcode"]
+wincode = ["dep:wincode", "mirl_graphics/wincode"]
+compactly = ["dep:compactly", "mirl_graphics/compactly"]
+zerocopy = ["dep:zerocopy", "mirl_graphics/zerocopy"]
 # Enum extensions
-strum = ["dep:strum", "mirl_derive", "mirl_graphics/strum"]
-enum_ext = ["dep:enum_ext", "mirl_derive", "mirl_graphics/enum_ext"]
+strum = ["dep:strum", "mirl_graphics/strum"]
+enum_ext = ["dep:enum_ext", "mirl_graphics/enum_ext"]
+enum_ordinalize = ["dep:enum-ordinalize"]
+rkyv = ["dep:rkyv"]
+parity_scale_codec = ["dep:parity-scale-codec"]
+get_size2 = ["dep:get-size2"]
+bevy_reflect = ["dep:bevy_reflect"]
 
 [dependencies]
 bitcode = { version = "0.6", optional = true, default-features = false, features = [
     "derive",
 ] }
 # Codec
-compactly = { version = "0.1", optional = true }
+compactly = { version = "0.2", optional = true }
 enum_ext = { version = "0.6", optional = true, default-features = false }
-mirl_derive = { version = "0.0.0-alpha", optional = true }
+mirl_macros = { version = "0.0.0-alpha" }
 mirl_extensions_math = { version = "0.0.0-alpha" }
 mirl_graphics = { version = "0.0.0-alpha" }
 serde = { version = "1.0", optional = true, default-features = false, features = [
@@ -58,14 +67,20 @@ serde = { version = "1.0", optional = true, default-features = false, features =
 strum = { version = "0.28", optional = true, default-features = false, features = [
     "derive",
 ] }
-wincode = { version = "0.5", optional = true, features = ["derive"] }
+wincode = { version = "0.6", optional = true, features = ["derive"] }
 zerocopy = { version = "0.8", optional = true, default-features = false, features = [
     "float-nightly",
     "derive",
 ] }
+enum-ordinalize = { version = "4.4.2", optional = true }
+rkyv = { version = "0.8", optional = true }
+parity-scale-codec = { version = "3.7", optional = true, features = ["derive"] }
+get-size2 = { version = "0.11", optional = true, features = ["derive"] }
+bevy_reflect = { version = "0.20", optional = true }
+
 
 [build-dependencies]
-mirl_build_tools = { workspace = true }
+mirl_build_tools = { version = "0.0.0-alpha" }
 
 [lints]
 workspace = true
